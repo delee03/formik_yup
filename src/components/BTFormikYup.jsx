@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Breadcrumb,
     Button,
@@ -32,10 +32,18 @@ const BTFormikYup = () => {
     //     sdt: "",
     // });
     const [arrNV, setArrNV] = useState([]);
+    const [originalArrNV, setOriginalArrNV] = useState([]);
+
     const [disable, setDisable] = useState({
         pointer: "",
         bg: "",
     });
+
+    useEffect(() => {
+        const data = getFromLocalStorage();
+        setArrNV(data);
+        setOriginalArrNV(data);
+    }, []);
 
     const formik = useFormik({
         //onChange, onBlur, touched, error
@@ -47,6 +55,7 @@ const BTFormikYup = () => {
             sdt: "",
             gioiTinh: "",
             ngaySinh: "",
+            search: "",
         },
 
         onSubmit: (values) => {
@@ -65,6 +74,7 @@ const BTFormikYup = () => {
             } else {
                 setArrNV([...arrNV, values]);
             }
+            saveToLocalStorage([...arrNV, values]);
             setDisable({ pointer: "", bg: "" });
             setFieldValue("ngaySinh", null);
             resetForm();
@@ -141,6 +151,15 @@ const BTFormikYup = () => {
         }
     };
 
+    const saveToLocalStorage = (data) => {
+        localStorage.setItem("arrNV", JSON.stringify(data));
+    };
+
+    const getFromLocalStorage = () => {
+        const data = localStorage.getItem("arrNV");
+        return data ? JSON.parse(data) : [];
+    };
+
     //get infoNV
     const getInforNV = (msnvUpdate) => {
         const index = arrNV.findIndex((item) => item.msnv == msnvUpdate);
@@ -161,6 +180,18 @@ const BTFormikYup = () => {
 
     console.log(disable);
 
+    const handleSearchInput = (event) => {
+        const { value } = event.target;
+        formik.setFieldValue("search", value);
+        if (value === "") {
+            setArrNV(originalArrNV);
+        } else {
+            const newArr = originalArrNV.filter((item) =>
+                item.hoTen.toLowerCase().includes(value.toLowerCase())
+            );
+            setArrNV(newArr);
+        }
+    };
     return (
         <Layout className="min-h-screen">
             <Header
@@ -355,7 +386,10 @@ const BTFormikYup = () => {
                                         onClick={handleReset}
                                         hoverColor="hover:bg-green-800"
                                     />
-                                    <SearchInput />
+                                    <SearchInput
+                                        value={values.search}
+                                        handleSearchInput={handleSearchInput}
+                                    />
                                 </div>
                             </div>
                         </div>

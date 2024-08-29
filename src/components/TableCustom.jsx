@@ -1,5 +1,5 @@
 import React from "react";
-import { Space, Table, Tag } from "antd";
+import { Space, Table, Tag, Tooltip, Button } from "antd";
 import ButtonCustom from "./ButtonCustom";
 import { IconDelete, IconEdit, IconLook } from "../assets/Icon/IconStorage";
 
@@ -48,28 +48,41 @@ const TableCustom = ({ arrNV, handleDelete, getInforNV }) => {
             key: "action",
             render: (text, record, index) => (
                 <Space size="middle">
-                    <ButtonCustom
-                        mt="0"
-                        bgColor="bg-sky-500"
-                        content={<IconLook />}
-                        hoverColor="hover:bg-sky-700"
-                    />
-                    <ButtonCustom
-                        mt="0"
-                        bgColor="bg-yellow-500"
-                        content={<IconEdit />}
-                        onClick={() => {
-                            getInforNV(record.msnv);
-                        }}
-                        hoverColor="hover:bg-yellow-700"
-                    />
-                    <ButtonCustom
-                        bgColor="bg-red-500"
-                        mt="0"
-                        onClick={() => handleDelete(record.msnv)}
-                        content={<IconDelete />}
-                        hoverColor="hover:bg-red-700"
-                    />
+                    <Tooltip placement="top" title="Xem trước" color="blue">
+                        <Button className="w-12 mr-2">
+                            <ButtonCustom
+                                mt="0"
+                                bgColor="bg-sky-500"
+                                content={<IconLook />}
+                                hoverColor="hover:bg-sky-700"
+                            />
+                        </Button>
+                    </Tooltip>
+
+                    <Tooltip placement="top" title="Chỉnh sửa" color="yellow">
+                        <Button className="w-12 mr-2">
+                            <ButtonCustom
+                                mt="0"
+                                bgColor="bg-yellow-500"
+                                content={<IconEdit />}
+                                onClick={() => {
+                                    getInforNV(record.msnv);
+                                }}
+                                hoverColor="hover:bg-yellow-700"
+                            />
+                        </Button>
+                    </Tooltip>
+                    <Tooltip placement="top" title="Xóa nhân viên" color="red">
+                        <Button className="w-12 mr-2">
+                            <ButtonCustom
+                                bgColor="bg-red-500"
+                                mt="0"
+                                onClick={() => handleDelete(record.msnv)}
+                                content={<IconDelete />}
+                                hoverColor="hover:bg-red-700"
+                            />
+                        </Button>
+                    </Tooltip>
                 </Space>
             ),
         },

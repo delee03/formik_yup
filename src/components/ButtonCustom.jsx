@@ -9,13 +9,17 @@ const ButtonCustom = ({
     hoverColor = "hover:bg-blue-700",
 }) => {
     return (
-        <button
-            type={type}
-            onClick={onClick}
-            className={`${bgColor} px-5 py-2  mx-1 ${mt} rounded-lg text-white pointer ${hoverColor} focus:bg-purple-500 `}
-        >
-            {content}
-        </button>
+        <>
+            <button
+                type={type}
+                data-tooltip-target="tooltip-light"
+                data-tooltip-style="light"
+                onClick={onClick}
+                className={`${bgColor} px-5 py-2  mx-1 ${mt} rounded-lg text-white pointer ${hoverColor} focus:bg-purple-500 `}
+            >
+                {content}
+            </button>
+        </>
     );
 };
 
