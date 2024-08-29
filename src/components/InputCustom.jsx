@@ -8,6 +8,8 @@ const InputCustom = ({
     name,
     type = "text",
     onChange,
+    pointerEvents = "",
+    bgColor = "",
     error,
     touched,
 }) => {
@@ -17,7 +19,7 @@ const InputCustom = ({
             <input
                 id={id}
                 name={name}
-                className="block mt-2 w-full border-gray-500 border rounded-lg py-3 px-2 focus:ring-blue-500 focus:border-blue-500"
+                className={`block ${pointerEvents} ${bgColor} mt-2 w-full border-gray-500 border rounded-lg py-3 px-2 focus:ring-blue-500 focus:border-blue-500`}
                 type={type}
                 value={value}
                 placeholder={placeholder}

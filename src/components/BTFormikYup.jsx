@@ -13,6 +13,8 @@ import InputCustom from "./InputCustom";
 import ButtonCustom from "./ButtonCustom";
 import * as yup from "yup";
 import dayjs from "dayjs";
+import TableCustom from "./TableCustom";
+import SearchInput from "./SearchInput";
 
 const { Header, Content, Footer } = Layout;
 const items = new Array(4).fill(null).map((_, index) => ({
@@ -29,6 +31,11 @@ const BTFormikYup = () => {
     //     email: "",
     //     sdt: "",
     // });
+    const [arrNV, setArrNV] = useState([]);
+    const [disable, setDisable] = useState({
+        pointer: "",
+        bg: "",
+    });
 
     const formik = useFormik({
         //onChange, onBlur, touched, error
@@ -44,11 +51,31 @@ const BTFormikYup = () => {
 
         onSubmit: (values) => {
             console.log(values);
+
+            // const newArr = arrNV;
+            // newArr.push(values);
+            // setArrNV(newArr);
+            // setArrNV([...arrNV, values]);
+
+            const index = arrNV.findIndex((item) => item.msnv == values.msnv);
+            if (index !== -1) {
+                const newArrUpdate = [...arrNV];
+                newArrUpdate[index] = values;
+                setArrNV(newArrUpdate);
+            } else {
+                setArrNV([...arrNV, values]);
+            }
+            setDisable({ pointer: "", bg: "" });
             setFieldValue("ngaySinh", null);
             resetForm();
         },
 
         validationSchema: yup.object({
+            msnv: yup
+                .number()
+                .required("Vui lòng không bỏ trống trường này")
+                .min(1, "Tối thiểu 1 kí tự"),
+
             email: yup
                 .string()
                 .required("Không được bỏ trống")
@@ -59,6 +86,7 @@ const BTFormikYup = () => {
             hoTen: yup
                 .string()
                 .required("Không được bỏ trống")
+                .matches(/^[A-Za-zÀ-ỹ\s]+$/, "Vui lòng nhập chữ không có số")
                 .min(6, "Tên phải trên 6 kí tự")
                 .max(30, "Tối đa 12 kí tự"),
             password: yup
@@ -67,12 +95,12 @@ const BTFormikYup = () => {
                     /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/,
                     "Vui lòng tạo mật khẩu có ít nhất 1 kí tự in hoa ở đầu, 1 số , 1 đặt biệt"
                 ),
-            sdt: yup
-                .string()
-                .matches(
-                    /^(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})$/,
-                    "Vui lòng nhập đúng số điện thoại Việt Nam"
-                ),
+            // sdt: yup
+            //     .string()
+            //     .matches(
+            //         /^(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})$/,
+            //         "Vui lòng nhập đúng số điện thoại Việt Nam"
+            //     ),
             gioiTinh: yup.string().required("Bạn vui lòng chọn giới tính"),
             ngaySinh: yup.string().required("Bạn vui lòng chọn ngày sinh"),
         }),
@@ -99,10 +127,42 @@ const BTFormikYup = () => {
     //     setValueInput({ ...value, [id]: event.target.value });
     // };
 
-    console.log(touched);
+    // console.log(touched);
+    //console.log(arrNV);
+
+    //handle Delete NV , Update NV, Search NV theo hoTen
+
+    const handleDelete = (id) => {
+        const newArrUpdate = [...arrNV];
+        const index = newArrUpdate.findIndex((item) => item.msnv === id);
+        if (index !== -1) {
+            newArrUpdate.splice(index, 1);
+            setArrNV(newArrUpdate);
+        }
+    };
+
+    //get infoNV
+    const getInforNV = (msnvUpdate) => {
+        const index = arrNV.findIndex((item) => item.msnv == msnvUpdate);
+
+        if (index != -1) {
+            const newArrUpdate = arrNV[index];
+            setFieldValue("msnv", newArrUpdate.msnv);
+            setFieldValue("hoTen", newArrUpdate.hoTen);
+            setFieldValue("email", newArrUpdate.email);
+            setFieldValue("sdt", newArrUpdate.sdt);
+            setFieldValue("password", newArrUpdate.password);
+            setFieldValue("gioiTinh", newArrUpdate.gioiTinh);
+            setFieldValue("ngaySinh", newArrUpdate.ngaySinh);
+
+            setDisable({ pointer: "pointer-events-none", bg: "bg-gray-300" });
+        }
+    };
+
+    console.log(disable);
 
     return (
-        <Layout>
+        <Layout className="min-h-screen">
             <Header
                 style={{
                     position: "sticky",
@@ -148,7 +208,7 @@ const BTFormikYup = () => {
                         padding: 24,
                         background: colorBgContainer,
                         borderRadius: borderRadiusLG,
-                        height: "100vh",
+
                         zIndex: 100,
                     }}
                 >
@@ -159,10 +219,12 @@ const BTFormikYup = () => {
                         <div className="max-w-7xl mx-auto">
                             <div className="grid grid-cols-2 gap-5">
                                 <InputCustom
-                                    type="text"
+                                    type="number"
                                     content="Mã nhân viên"
                                     name="msnv"
                                     id="msnv"
+                                    pointerEvents={disable.pointer}
+                                    bgColor={disable.bg}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     value={values.msnv}
@@ -200,6 +262,8 @@ const BTFormikYup = () => {
                                     type="password"
                                     content="Mật khẩu"
                                     id="password"
+                                    pointerEvents={disable.pointer}
+                                    bgColor={disable.bg}
                                     name={"password"}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -227,8 +291,8 @@ const BTFormikYup = () => {
                                     <DatePicker
                                         className="border-gray-500 border rounded-lg  mt-2 text-black block w-full"
                                         onChange={(date, dateString) => {
-                                            console.log(date);
-                                            console.log(dateString);
+                                            // console.log(date);
+                                            // console.log(dateString);
                                             setFieldValue(
                                                 "ngaySinh",
                                                 dateString || null
@@ -282,33 +346,33 @@ const BTFormikYup = () => {
                                     <ButtonCustom
                                         type="submit"
                                         bgColor="bg-sky-500"
-                                        content="Thêm nhân viên"
+                                        content="Thêm / Sửa nhân viên"
                                     />
-                                    <ButtonCustom
-                                        bgColor="bg-yellow-500"
-                                        content="Cập nhật nhân viên"
-                                        hoverColor="hover:bg-yellow-700"
-                                    />
-                                    <ButtonCustom
-                                        bgColor="bg-red-500"
-                                        content="Xóa"
-                                        hoverColor="hover:bg-red-700"
-                                    />
+
                                     <ButtonCustom
                                         bgColor="bg-green-600"
                                         content="Reset"
                                         onClick={handleReset}
                                         hoverColor="hover:bg-green-800"
                                     />
+                                    <SearchInput />
                                 </div>
                             </div>
                         </div>
                     </form>
+                    <div className="ml-4 my-4 flex mt-8 justify-center w-6/12 mx-auto"></div>
+
+                    <TableCustom
+                        arrNV={arrNV}
+                        handleDelete={handleDelete}
+                        getInforNV={getInforNV}
+                    />
                 </div>
             </Content>
             <Footer
                 style={{
                     textAlign: "center",
+                    marginBottom: 0,
                 }}
             >
                 Phát Design ©{new Date().getFullYear()} Created by Đông Copilot

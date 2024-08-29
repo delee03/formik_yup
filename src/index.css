@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.formTable th,
+.formTable td {
+    @apply !text-center;
+}
