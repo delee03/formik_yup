@@ -12,6 +12,7 @@ import { useFormik } from "formik";
 import InputCustom from "./InputCustom";
 import ButtonCustom from "./ButtonCustom";
 import * as yup from "yup";
+import dayjs from "dayjs";
 
 const { Header, Content, Footer } = Layout;
 const items = new Array(4).fill(null).map((_, index) => ({
@@ -43,6 +44,8 @@ const BTFormikYup = () => {
 
         onSubmit: (values) => {
             console.log(values);
+            setFieldValue("ngaySinh", null);
+            resetForm();
         },
 
         validationSchema: yup.object({
@@ -57,7 +60,7 @@ const BTFormikYup = () => {
                 .string()
                 .required("Không được bỏ trống")
                 .min(6, "Tên phải trên 6 kí tự")
-                .max(12, "Tối đa 12 kí tự"),
+                .max(30, "Tối đa 12 kí tự"),
             password: yup
                 .string()
                 .matches(
@@ -70,6 +73,8 @@ const BTFormikYup = () => {
                     /^(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})$/,
                     "Vui lòng nhập đúng số điện thoại Việt Nam"
                 ),
+            gioiTinh: yup.string().required("Bạn vui lòng chọn giới tính"),
+            ngaySinh: yup.string().required("Bạn vui lòng chọn ngày sinh"),
         }),
     });
 
@@ -78,9 +83,11 @@ const BTFormikYup = () => {
         handleChange,
         handleSubmit,
         handleReset,
+        setFieldValue,
         values,
         touched,
         errors,
+        resetForm,
     } = formik;
 
     // const handleSubmit = () => {
@@ -214,23 +221,50 @@ const BTFormikYup = () => {
                                     error={errors.sdt}
                                 />
                                 <div>
-                                    <label htmlFor="">Chọn ngày sinh</label>
+                                    <label htmlFor="ngaySinh">
+                                        Chọn ngày sinh
+                                    </label>
                                     <DatePicker
                                         className="border-gray-500 border rounded-lg  mt-2 text-black block w-full"
-                                        onChange={handleChange}
+                                        onChange={(date, dateString) => {
+                                            console.log(date);
+                                            console.log(dateString);
+                                            setFieldValue(
+                                                "ngaySinh",
+                                                dateString || null
+                                            );
+                                        }}
+                                        name="ngaySinh"
                                         onBlur={handleBlur}
+                                        value={
+                                            values.ngaySinh
+                                                ? dayjs(
+                                                      values.ngaySinh,
+                                                      "DD-MM-YYYY"
+                                                  )
+                                                : null
+                                        }
                                         errors={errors.ngaySinh}
+                                        format={"DD-MM-YYYY"}
                                     />
+                                    {errors.ngaySinh && touched.ngaySinh ? (
+                                        <p className="py-2 text-red-500">
+                                            {errors.ngaySinh}
+                                        </p>
+                                    ) : null}
                                 </div>
 
                                 <div>
-                                    <label htmlFor="">Chọn giới tính</label>
+                                    <label htmlFor="gioiTinh">
+                                        Chọn giới tính
+                                    </label>
                                     <select
                                         name="gioiTinh"
                                         id="gioiTinh"
                                         className="rounded-lg border py-3 border-gray-500 mt-2 block w-full"
                                         onChange={handleChange}
                                         onBlur={handleBlur}
+                                        value={values.gioiTinh}
                                         errors={errors.gioiTinh}
                                     >
                                         <option value="">Chọn giới tính</option>
@@ -253,14 +287,18 @@ const BTFormikYup = () => {
                                     <ButtonCustom
                                         bgColor="bg-yellow-500"
                                         content="Cập nhật nhân viên"
+                                        hoverColor="hover:bg-yellow-700"
                                     />
                                     <ButtonCustom
                                         bgColor="bg-red-500"
                                         content="Xóa"
+                                        hoverColor="hover:bg-red-700"
                                     />
                                     <ButtonCustom
                                         bgColor="bg-green-600"
                                         content="Reset"
+                                        onClick={handleReset}
+                                        hoverColor="hover:bg-green-800"
                                     />
                                 </div>
                             </div>
