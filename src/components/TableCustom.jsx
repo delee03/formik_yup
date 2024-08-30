@@ -2,8 +2,20 @@ import React from "react";
 import { Space, Table, Tag, Tooltip, Button } from "antd";
 import ButtonCustom from "./ButtonCustom";
 import { IconDelete, IconEdit, IconLook } from "../assets/Icon/IconStorage";
+import ModalCustom from "./ModalCustom";
+import { useState } from "react";
 
 const TableCustom = ({ arrNV, handleDelete, getInforNV }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
     const columns = [
         {
             title: "MSNV",
@@ -46,10 +58,10 @@ const TableCustom = ({ arrNV, handleDelete, getInforNV }) => {
         {
             title: "Action",
             key: "action",
-            render: (text, record, index) => (
+            render: (_, record) => (
                 <Space size="middle">
                     <Tooltip placement="top" title="Xem trước" color="blue">
-                        <Button className="w-12 mr-2">
+                        <Button className="w-12 mr-2" onClick={handleOpenModal}>
                             <ButtonCustom
                                 mt="0"
                                 bgColor="bg-sky-500"
@@ -94,6 +106,12 @@ const TableCustom = ({ arrNV, handleDelete, getInforNV }) => {
                 className="mt-10 formTable"
                 columns={columns}
                 dataSource={arrNV}
+                rowKey="msnv"
+            />
+            <ModalCustom
+                isOpen={isModalOpen}
+                nvItem={arrNV}
+                handleCloseModal={handleCloseModal}
             />
         </div>
     );

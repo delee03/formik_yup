@@ -148,6 +148,7 @@ const BTFormikYup = () => {
         if (index !== -1) {
             newArrUpdate.splice(index, 1);
             setArrNV(newArrUpdate);
+            saveToLocalStorage(newArrUpdate);
         }
     };
 
@@ -178,16 +179,35 @@ const BTFormikYup = () => {
         }
     };
 
-    console.log(disable);
+    // const getInforModal = (msnvUpdate) => {
+    //     const index = arrNV.findIndex((item) => item.msnv == msnvUpdate);
+
+    //     if (index != -1) {
+    //         const newArrUpdate = arrNV[index];
+    //         setFieldValue("msnv", newArrUpdate.msnv);
+    //         setFieldValue("hoTen", newArrUpdate.hoTen);
+    //         setFieldValue("email", newArrUpdate.email);
+    //         setFieldValue("sdt", newArrUpdate.sdt);
+    //         setFieldValue("password", newArrUpdate.password);
+    //         setFieldValue("gioiTinh", newArrUpdate.gioiTinh);
+    //         setFieldValue("ngaySinh", newArrUpdate.ngaySinh);
+
+    //     }
+    // };
+
+    // console.log(disable);
 
     const handleSearchInput = (event) => {
         const { value } = event.target;
-        formik.setFieldValue("search", value);
+        setFieldValue("search", value);
         if (value === "") {
             setArrNV(originalArrNV);
         } else {
             const newArr = originalArrNV.filter((item) =>
-                item.hoTen.toLowerCase().includes(value.toLowerCase())
+                item.hoTen
+                    .toLowerCase()
+                    .trim()
+                    .includes(value.toLowerCase().trim())
             );
             setArrNV(newArr);
         }
@@ -246,6 +266,10 @@ const BTFormikYup = () => {
                     <h1 className="text-3xl text-sky-500 text-center py-6 font-bold">
                         Bài tập Formik và Yup
                     </h1>
+                    <h2 className="text-xl text-pink-500 text-center py-6 font-bold">
+                        Anh Đông copilot nhớ nhập dữ liệu tay nha dùng Fake
+                        Filter nó đè thanh search ko ra kết quả đúng!
+                    </h2>
                     <form onSubmit={handleSubmit} className="mt-6">
                         <div className="max-w-7xl mx-auto">
                             <div className="grid grid-cols-2 gap-5">
